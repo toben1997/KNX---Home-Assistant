@@ -14,7 +14,7 @@ blueprint:
 
     '
   author: toben1997
-  source_url: https://github.com/toben1997/home-assistant-knx-blueprint-edits-and-colevtion/blob/main/knx-mediplayer-power.yaml
+  source_url: https://github.com/toben1997/KNX-Home-Assistant/blob/main/KNX%20-%20Turn%20On-Off%20Media%20Player.yaml
   domain: automation
   input:
     media_player_entity:
