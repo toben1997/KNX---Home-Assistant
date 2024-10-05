@@ -17,7 +17,7 @@ blueprint:
 
     '
   author: toben1997
-  source_url: https://github.com/toben1997/home-assistant-knx-blueprint-edits-and-colevtion/blob/main/knx-mediaplayer-volume-control.yaml
+  source_url: https://github.com/toben1997/KNX-Home-Assistant/blob/main/KNX%20-%20Media%20Player%20Volume%20step%20Control%20and%20Mute.yaml
   domain: automation
   input:
     media_player_entity:
