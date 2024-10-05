@@ -33,7 +33,7 @@ blueprint:
 
         '
       default: ''
-  source_url: https://github.com/toben1997/home-assistant-knx-blueprint-edits-and-colevtion/blob/main/knx-input_bolean.yaml
+  source_url: https://github.com/toben1997/KNX-Home-Assistant/blob/main/KNX%20-%20Input%20Boolean%20control.yaml
 mode: parallel
 max_exceeded: silent
 variables:
