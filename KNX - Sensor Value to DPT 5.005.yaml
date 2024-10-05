@@ -1,0 +1,50 @@
+blueprint:
+  name: KNX - Sensor Value to DPT 5.005 (0-255) (by toben1997)
+  description: "Send sensor values to KNX DPT 5.005 Group address. Values below 0 are sent as 0, values above 255 are capped at 255."
+  author:
+  source_url: https://github.com/your-github-link
+  domain: automation
+  input:
+    sensor_entity:
+      name: Sensor Entity
+      description: Choose the sensor entity to monitor and send via KNX.
+      selector:
+        entity:
+          domain:
+            - sensor
+          multiple: false
+    knx_address:
+      name: KNX Address
+      description: Group address to send the weight value. DPT 5.005 (scaled values).
+      default: ""
+      selector:
+        text:
+mode: parallel
+max_exceeded: silent
+variables:
+  sensor_entity: !input sensor_entity
+  knx_address: !input knx_address
+
+trigger:
+  - platform: state
+    entity_id: !input sensor_entity
+
+action:
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: '{{ knx_address != "" }}'
+        sequence:
+          - service: knx.send
+            data:
+              address: "{{ knx_address }}"
+              payload: >
+                {% set value = states[sensor_entity].state | float(0) %}
+                {% if value < 0 %}
+                  0
+                {% elif value > 255 %}
+                  255
+                {% else %}
+                  {{ value | int }}
+                {% endif %}
+              type: "5.005"
