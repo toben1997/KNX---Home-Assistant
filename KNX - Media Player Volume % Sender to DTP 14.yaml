@@ -1,0 +1,40 @@
+blueprint:
+  name: KNX - Media Player Volume % Sender to DTP 14 (4-byte float) (by toben1997)
+  description:
+    "This blueprint sends the volume level percentage from a selected media
+    player entity to a specified KNX group address whenever the volume level changes.
+    It uses KNX data type 14 (4-byte float).
+
+    "
+  author: toben1997
+  source_url:
+  domain: automation
+  input:
+    knx_address:
+      name: KNX Group Address
+      description: The KNX DTP 14 group address to send the volume level percentage.
+      selector:
+        text: {}
+    media_player_entity:
+      name: Media Player Entity
+      description: The media player entity to monitor for volume level changes.
+      selector:
+        entity:
+          domain:
+            - media_player
+          multiple: false
+mode: parallel
+max_exceeded: silent
+variables:
+  knx_address: !input knx_address
+  media_player_entity: !input media_player_entity
+trigger:
+  - platform: state
+    entity_id: !input media_player_entity
+    attribute: volume_level
+action:
+  - service: knx.send
+    data:
+      address: "{{ knx_address }}"
+      payload: "{{ (trigger.to_state.attributes.volume_level * 100) | round(1) }}%"
+      type: string
