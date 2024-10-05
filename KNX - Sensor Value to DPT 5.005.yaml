@@ -1,8 +1,8 @@
 blueprint:
   name: KNX - Sensor Value to DPT 5.005 (0-255) (by toben1997)
   description: "Send sensor values to KNX DPT 5.005 Group address. Values below 0 are sent as 0, values above 255 are capped at 255."
-  author:
-  source_url: https://github.com/your-github-link
+  author: toben1997
+  source_url: https://github.com/toben1997/KNX-Home-Assistant/blob/main/KNX%20-%20Sensor%20Value%20to%20DPT%205.005.yaml
   domain: automation
   input:
     sensor_entity:
