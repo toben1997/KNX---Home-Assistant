@@ -21,7 +21,7 @@ blueprint:
 
     '
   author: toben1997
-  source_url: https://github.com/toben1997/home-assistant-knx-blueprint-edits-and-colevtion/blob/main/knx-mediapayer-playback.yaml
+  source_url: https://github.com/toben1997/KNX-Home-Assistant/blob/main/knx-mediapayer-playback.yaml
   domain: automation
   input:
     media_player_entity:
