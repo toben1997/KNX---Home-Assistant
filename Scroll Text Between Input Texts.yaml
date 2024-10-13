@@ -3,7 +3,7 @@ blueprint:
   description: Scrolls the text in a Home Assistant input_text and displays it in another input_text. **Note:** The scroll interval is set to 3 second by default. To change it, you need to take control of the blueprint and modify the YAML code of the trigger.
   domain: automation
   author: toben1997
-  source_url: "https://example.com"
+  source_url: "https://github.com/toben1997/KNX-Home-Assistant/blob/main/Scroll%20Text%20Between%20Input%20Texts.yaml"
   input:
     source_input_text:
       name: Source Input Text
