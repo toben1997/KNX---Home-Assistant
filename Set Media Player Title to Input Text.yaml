@@ -3,7 +3,7 @@ blueprint:
   description: This blueprint updates the input text entity with the title and artist from a specified media player.
   domain: automation
   author: toben1997
-  source_url: "https://example.com"
+  source_url: "https://github.com/toben1997/KNX-Home-Assistant/blob/main/Set%20Media%20Player%20Title%20to%20Input%20Text.yaml"
   input:
     media_player_entity:
       name: Media Player
