@@ -3,7 +3,7 @@ blueprint:
   description: Synchronizes the text between a Home Assistant input_text and a KNX group address.
   domain: automation
   author: toben1997
-  source_url: "https://example.com"
+  source_url: "https://github.com/toben1997/KNX-Home-Assistant/blob/main/KNX%20-%20Input_text%20Synchronization.yaml"
   input:
     source_input_text:
       name: Source Input Text
