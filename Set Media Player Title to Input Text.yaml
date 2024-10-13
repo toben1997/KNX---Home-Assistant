@@ -1,0 +1,42 @@
+blueprint:
+  name: Set Media Player Title to Input Text (by toben1997)
+  description: This blueprint updates the input text entity with the title and artist from a specified media player.
+  domain: automation
+  author: toben1997
+  source_url: "https://example.com"
+  input:
+    media_player_entity:
+      name: Media Player
+      description: The media player entity from which the title and artist will be extracted.
+      selector:
+        entity:
+          domain: media_player
+    input_text_entity:
+      name: Input Text
+      description: The input text entity where the title and artist will be stored.
+      selector:
+        entity:
+          domain: input_text
+
+trigger:
+  - platform: state
+    entity_id: !input media_player_entity
+    attribute: media_title
+
+condition: []
+
+variables:
+  media_player_entity: !input media_player_entity
+
+action:
+  - service: input_text.set_value
+    target:
+      entity_id: !input input_text_entity
+    data:
+      value: >-
+        {% set title = state_attr(media_player_entity, 'media_title') %}
+        {% set artist = state_attr(media_player_entity, 'media_artist') %}
+        {{ title if title else 'Unknown' }} - {{ artist if artist else 'Unknown' }}
+
+mode: single
+
