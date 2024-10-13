@@ -1,0 +1,106 @@
+blueprint:
+  name: Scroll Text Between Input Texts (by toben1997)
+  description: Scrolls the text in a Home Assistant input_text and displays it in another input_text. **Note:** The scroll interval is set to 3 second by default. To change it, you need to take control of the blueprint and modify the YAML code of the trigger.
+  domain: automation
+  author: toben1997
+  source_url: "https://example.com"
+  input:
+    source_input_text:
+      name: Source Input Text
+      description: The input text to be scrolled. **Note:** The source input_text entity can have any length.
+      selector:
+        entity:
+          domain: input_text
+    text_position_input:
+      name: Text Position Input
+      description: The input_text entity that keeps track of the current scroll position.
+      selector:
+        entity:
+          domain: input_text
+    target_input_text:
+      name: Target Input Text
+      description: The input_text entity where the scrolled text will be displayed. **Note:** The target input_text entity must be set to a maximum of 14 characters. The displayed text will be reduced to 14 characters.
+      selector:
+        entity:
+          domain: input_text
+    use_control_entity:
+      name: Use Control Entity
+      description: Whether to use a control entity to determine if scrolling should occur.
+      selector:
+        boolean: {}
+    control_entity:
+      name: Control Entity
+      default: ''
+      description: The entity that controls whether the text should be scrolled based on its state.
+      selector:
+        entity: {}
+    control_entity_state:
+      name: Control Entity State
+      default: ''
+      description: The state of the control entity that triggers scrolling.
+      selector:
+        text:
+    scroll_length:
+      name: Scroll Length
+      description: The number of characters to scroll at a time.
+      selector:
+        number:
+          min: 1
+          max: 14
+          mode: slider
+
+variables:
+  source_input_text: !input source_input_text
+  text_position_input: !input text_position_input
+  target_input_text: !input target_input_text
+  use_control_entity: !input use_control_entity
+  control_entity: !input control_entity
+  control_entity_state: !input control_entity_state
+  scroll_length: !input scroll_length
+
+trigger:
+  - platform: time_pattern
+    seconds: "/3"
+
+condition:
+  - condition: template
+    value_template: >-
+      {{ not use_control_entity or is_state(control_entity, control_entity_state) }}
+
+action:
+  - variables:
+      full_text: "{{ states(source_input_text) }}"
+      current_position: "{{ states(text_position_input) | int(0) }}"
+      text_length: "{{ full_text | length }}"
+      scroll_step: "{{ scroll_length }}"
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ current_position + 14 > text_length }}"
+        sequence:
+          - service: input_text.set_value
+            target:
+              entity_id: !input 'text_position_input'
+            data:
+              value: 0
+          - service: input_text.set_value
+            target:
+              entity_id: !input 'target_input_text'
+            data:
+              value: "{{ full_text[:14] }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ current_position + 14 <= text_length }}"
+        sequence:
+          - service: input_text.set_value
+            target:
+              entity_id: !input 'text_position_input'
+            data:
+              value: "{{ current_position + scroll_step }}"
+          - service: input_text.set_value
+            target:
+              entity_id: !input 'target_input_text'
+            data:
+              value: "{{ full_text[current_position:current_position + 14] }}"
+
+mode: single
