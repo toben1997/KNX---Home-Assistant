@@ -1,0 +1,36 @@
+blueprint:
+  name: KNX - Sync Text Between HA and KNX (by toben1997)
+  description: Synchronizes the text between a Home Assistant input_text and a KNX group address.
+  domain: automation
+  author: toben1997
+  source_url: "https://example.com"
+  input:
+    source_input_text:
+      name: Source Input Text
+      description: The input text to be copied. **Note:** The input_text entity must be set to a maximum of 14 characters.
+      selector:
+        entity:
+          domain: input_text
+    knx_group_address:
+      name: KNX Group Address
+      description: The KNX group address (DPT 14) to which the text will be sent.
+      selector:
+        text:
+
+variables:
+  source_input_text: !input source_input_text
+  knx_group_address: !input knx_group_address
+
+trigger:
+  - platform: state
+    entity_id: !input 'source_input_text'
+
+action:
+  - service: knx.send
+    data:
+      response: false
+      address: "{{ knx_group_address }}"
+      payload: "{{ states(source_input_text) }}"
+      type: string
+
+mode: single
