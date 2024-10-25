@@ -21,10 +21,10 @@ blueprint:
 
     stellwerte:
       name: Stellwert(e) für Heizungssteuerung
-      description: "Input-Number(s) zur Steuerung der Heizleistung in Prozent (0-100%)."
+      description: "Number-Entitäten zur Steuerung der Heizleistung in Prozent (0-100%)."
       selector:
         entity:
-          domain: input_number
+          domain: number
           multiple: true
 
   source_url: https://your-blueprint-url-if-any
@@ -55,7 +55,7 @@ action:
   - repeat:
       for_each: !input stellwerte
       sequence:
-        - service: input_number.set_value
+        - service: number.set_value
           target:
             entity_id: "{{ repeat.item }}"
           data:
