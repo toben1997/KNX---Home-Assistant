@@ -1,0 +1,62 @@
+blueprint:
+  name: Heizungssteuerung mit Mittelwert und Solltemperatur
+  description: "Steuert den Heizungsstellwert basierend auf dem Mittelwert mehrerer Ist-Temperaturen und einer Solltemperatur."
+  domain: automation
+  input:
+    ist_temperaturen:
+      name: Ist-Temperatur(en)
+      description: "Liste der Ist-Temperatur-Sensoren."
+      selector:
+        entity:
+          domain: sensor
+          device_class: temperature
+          multiple: true
+
+    soll_temperatur:
+      name: Solltemperatur
+      description: "Input-Number zur Eingabe der gewünschten Solltemperatur."
+      selector:
+        entity:
+          domain: input_number
+
+    stellwerte:
+      name: Stellwert(e) für Heizungssteuerung
+      description: "Input-Number(s) zur Steuerung der Heizleistung in Prozent (0-100%)."
+      selector:
+        entity:
+          domain: input_number
+          multiple: true
+
+  source_url: https://your-blueprint-url-if-any
+
+mode: single
+
+variables:
+  mean_ist_temp: >
+    {{ expand(ist_temperaturen) | map(attribute='state') | map('float') | reject('is_nan') | list | average }}
+
+  target_temp: "{{ states(soll_temperatur) | float(0) }}"
+  deviation: "{{ target_temp - mean_ist_temp }}"
+  heating_value: >
+    {{ (100 * deviation / target_temp) | max(0) | min(100) | round(0) if deviation > 0 else 0 }}
+
+trigger:
+  - platform: state
+    entity_id: !input ist_temperaturen
+
+  - platform: state
+    entity_id: !input soll_temperatur
+
+condition:
+  - condition: template
+    value_template: "{{ deviation > 0 }}"
+
+action:
+  - repeat:
+      for_each: !input stellwerte
+      sequence:
+        - service: input_number.set_value
+          target:
+            entity_id: "{{ repeat.item }}"
+          data:
+            value: "{{ heating_value }}"
