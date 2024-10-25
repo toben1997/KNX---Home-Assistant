@@ -47,6 +47,9 @@ trigger:
   - platform: state
     entity_id: !input soll_temperatur
 
+  - platform: time_pattern
+    minutes: "/1"  # Löst jede Minute aus
+
 condition:
   - condition: template
     value_template: "{{ deviation > 0 }}"
@@ -60,3 +63,8 @@ action:
             entity_id: "{{ repeat.item }}"
           data:
             value: "{{ heating_value }}"
+  - service: input_number.set_value
+    target:
+      entity_id: sensor.mean_ist_temp
+    data:
+      value: "{{ mean_ist_temp }}"
