@@ -1,0 +1,14 @@
+action:
+  - service: system_log.write
+    data:
+      message: >
+        Ist-Temperatur: {{ current_temp }},
+        Soll-Temperatur: {{ target_temp }},
+        Abweichung: {{ deviation }},
+        Stellwert: {{ heating_value }}
+      level: debug
+  - service: input_number.set_value
+    target:
+      entity_id: !input stellwert
+    data:
+      value: "{{ heating_value }}"
