@@ -1,3 +1,55 @@
+blueprint:
+  name: Einfache Heizungssteuerung mit Solltemperatur
+  description: "Steuert den Heizungsstellwert basierend auf einer Ist-Temperatur und einer Solltemperatur."
+  domain: automation
+  input:
+    ist_temperatur:
+      name: Ist-Temperatur
+      description: "Sensor für die Ist-Temperatur."
+      selector:
+        entity:
+          domain: sensor
+          device_class: temperature
+
+    soll_temperatur:
+      name: Solltemperatur
+      description: "Input-Number zur Eingabe der gewünschten Solltemperatur."
+      selector:
+        entity:
+          domain: input_number
+
+    stellwert:
+      name: Stellwert für Heizungssteuerung
+      description: "Input-Number zur Steuerung der Heizleistung in Prozent (0-100%)."
+      selector:
+        entity:
+          domain: input_number
+
+  source_url: https://your-blueprint-url-if-any
+
+mode: single
+
+variables:
+  current_temp: "{{ states(ist_temperatur) | float(0) }}"
+  target_temp: "{{ states(soll_temperatur) | float(0) }}"
+  deviation: "{{ target_temp - current_temp }}"
+  heating_value: >
+    {{ (100 * deviation / target_temp) | max(0) | min(100) | round(0) if deviation > 0 else 0 }}
+
+trigger:
+  - platform: state
+    entity_id: !input ist_temperatur
+
+  - platform: state
+    entity_id: !input soll_temperatur
+
+  - platform: time_pattern
+    minutes: "/1"  # Löst jede Minute aus
+
+condition:
+  - condition: template
+    value_template: "{{ deviation > 0 }}"
+
 action:
   - service: system_log.write
     data:
